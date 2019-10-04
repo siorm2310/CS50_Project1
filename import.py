@@ -9,7 +9,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 
 def main():
-    f = open(r"D:\CS50_web_course\project1\my_code\books.csv")
+    f = open(r"C:\CS50_Course\project1\books.csv")
     reader = csv.reader(f)
     next(reader)
     for isbn, title, author, year in reader:

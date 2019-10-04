@@ -1,9 +1,10 @@
 import os
 
-from flask import Flask, session
+from flask import Flask, session, render_template
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from models import *
 
 app = Flask(__name__)
 
@@ -21,17 +22,21 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
+@app.route("/", methods=['POST','GET'] )
 def main():
-    return "Main page : search engine + user info display + log in / out"
+    return render_template("index.html")
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["POST","GET"])
 def register():
-    return "registration page"
+    return render_template("register.html")
+
+# @app.route("/api/<string:isbn>", methods=["GET"])
+# def api_route():
+#     return "API book information page"
 
 @app.route("/error")
-def error():
-    return "custom error page"
+def error(err_message): # ???
+    return render_template("error.html", message = "err_message")
 
 @app.route("/success")
 def success():

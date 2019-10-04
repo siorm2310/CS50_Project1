@@ -1,29 +1,20 @@
 {% extends "layout.html" %}
-
+<!-- TODO : edit to book application -->
 {% block title %}
-    Flights
+    Bookifier
 {% endblock %}
 
 {% block body %}
-    <h1>Book a Flight</h1>
-
-    <form action="{{ url_for('book') }}" method="post">
-
-        <div class="form-group">
-            <select class="form-control" name="flight_id">
-                {% for flight in flights %}
-                    <option value="{{ flight.id }}">{{ flight.origin }} to {{ flight.destination }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group">
-            <input class="form-control" name="name" placeholder="Passenger Name">
-        </div>
-
-        <div class="form-group">
-            <button class="btn btn-primary">Book Flight</button>
-        </div>
-
-    </form>
+<h1>
+    Hello! welcome to Bookifier
+</h1>
+<h2>
+    What would you like to do?
+</h2>
+<div>
+    <h3>Search for a book</h3>
+</div>
+<div>
+    <h3>Write a review</h3>
+</div>
 {% endblock %}
