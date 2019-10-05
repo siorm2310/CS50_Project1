@@ -15,7 +15,6 @@ if not os.getenv("DATABASE_URL"):
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 Session(app)
 
 # Set up database
@@ -32,6 +31,7 @@ def book_page(book_id):
     book = Book.query.get(book_id)
     if book is None:
         return render_template("error.html", message = "Sorry, ISBN didn't match any book")
+
     # TODO: get all book reviews
     return render_template("book_page.html", book = book)
 
