@@ -1,34 +1,28 @@
 {% extends "layout.html" %} {% block title %} Registration {% endblock %} {%
 block body %}
 <h1>Bokifier</h1>
-<h2>Registration:</h2>
+<h2>Sign up:</h2>
 
 <form>
   <div class="form-group">
-    <label for="userNameInput">Enter your Email address</label>
+    <label for="userNameInput">Email address</label>
     <input
       type="text"
       class="form-control"
-      id="userNameRegis"
+      id="userNameInput"
       aria-describedby="emailHelp"
       placeholder="Enter email"
     />
+    <small id="emailHelp" class="form-text text-muted"
+      >We'll never share your email with anyone else.</small
+    >
   </div>
   <div class="form-group">
-    <label for="userPasswordInput">Choose a password:</label>
+    <label for="userPasswordInput">Password</label>
     <input
       type="password"
       class="form-control"
-      id="userPasswordRegis1"
-      placeholder="Password"
-    />
-  </div>
-  <div class="form-group">
-    <label for="userPasswordInput">Enter password again:</label>
-    <input
-      type="password"
-      class="form-control"
-      id="userPasswordRegis2"
+      id="userPasswordInput"
       placeholder="Password"
     />
   </div>

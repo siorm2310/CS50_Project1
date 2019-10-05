@@ -15,6 +15,7 @@ if not os.getenv("DATABASE_URL"):
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 Session(app)
 
 # Set up database
@@ -25,6 +26,18 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/", methods=['POST','GET'] )
 def main():
     return render_template("index.html")
+    
+@app.route("/book/<int:book_id>", methods=['POST','GET'] )
+def book_page(book_id):
+    book = Book.query.get(book_id)
+    if book is None:
+        return render_template("error.html", message = "Sorry, ISBN didn't match any book")
+    # TODO: get all book reviews
+    return render_template("book_page.html", book = book)
+
+@app.route("/login", methods=["POST","GET"])
+def login():
+    return render_template("login.html")
 
 @app.route("/register", methods=["POST","GET"])
 def register():
@@ -36,7 +49,7 @@ def register():
 
 @app.route("/error")
 def error(err_message): # ???
-    return render_template("error.html", message = "err_message")
+    return render_template("error.html", message = err_message)
 
 @app.route("/success")
 def success():

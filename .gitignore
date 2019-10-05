@@ -2,7 +2,7 @@ books.csv
 README.md
 .idea/
 .vscode/
-/__pychache__
-/flask_session
+__pychache__/
+flask_session/
 src4/
 venv/

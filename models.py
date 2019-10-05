@@ -17,7 +17,7 @@ class User(db.Model):
         db.session.add(new_user)
         db.session.commit()
 
-class Review():
+class Review(db.Model):
     __tablename__ = "reviews"
     id = db.Column(db.Integer, primary_key=True)
     isbn = db.Column(db.String, db.ForeignKey("books.id"), nullable=False)
@@ -25,7 +25,7 @@ class Review():
     body = db.Column(db.String, nullable=False)
     rating = db.Column(db.String, nullable=False)
 
-class Book():
+class Book(db.Model):
     __tablename__ = "books"
     id = db.Column(db.Integer, primary_key=True)
     isbn = db.Column(db.String , nullable=False)
