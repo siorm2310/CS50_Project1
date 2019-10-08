@@ -4,7 +4,6 @@ from flask import Flask, session, render_template
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from models import *
 
 app = Flask(__name__)
 
@@ -26,9 +25,9 @@ db = scoped_session(sessionmaker(bind=engine))
 def main():
     return render_template("index.html")
     
-@app.route("/book/<int:book_id>", methods=['POST','GET'] )
-def book_page(book_id):
-    book = Book.query.get(book_id)
+@app.route("/book/<string:isbn_num>", methods=['POST','GET'] )
+def book_page(isbn_num):
+    book = db.execute(f"SELECT * FROM books WHERE isbn = '{isbn_num}'").fetchone()
     if book is None:
         return render_template("error.html", message = "Sorry, ISBN didn't match any book")
 
