@@ -1,5 +1,6 @@
 {% extends "layout.html" %} {% block title %} Error {% endblock %} {% block body
 %}
-<h1>Oppsi Doppsi! Something went wrong...</h1>
-{{ message }}
+<h1>Oppsi Dooppsi! Something went wrong...</h1>
+<h2>Error code : {{ message_code }}</h2>
+<h3>{{ message }}</h3>
 {% endblock %}

@@ -32,7 +32,7 @@ def main():
 def book_page(isbn_num):
     book = db.execute(f"SELECT * FROM books WHERE isbn = '{isbn_num}'").fetchone()
     if book is None:
-        return render_template("error.html", message = "Sorry, ISBN didn't match any book")
+        return render_template("error.html", message = "Sorry, ISBN didn't match any book", message_code = 404)
 
     # TODO: get all book reviews
     return render_template("book_page.html", book = book)
@@ -40,11 +40,21 @@ def book_page(isbn_num):
 
 @app.route("/login", methods=["POST","GET"])
 def login():
-    # username = request.form.get('username')
-    # password = request.form.get('password')
-    if request.method == 'POST':
-        session['username'] = request.form['username'] # ???
-        return redirect(url_for('index')) # ???
+    
+    if request.method == "GET":
+        session.pop('connected_user',None)
+        user_to_validate = request.form.get('username')
+        pass_to_validate = request.form.get('password')
+
+        db_user = db.execute(f"SELECT * FROM users WHERE username = '{user_to_validate}'").fetchone()
+        if db_user is None:
+            # return render_template("error.html", message = "Sorry, you are not registered", message_code = 400)
+            return render_template("login.html")
+            
+        if db_user.password != pass_to_validate:
+            return render_template("error.html", message = "Sorry, wrong password", message_code = 400)
+        session['connected_user'] = user_to_validate
+        return redirect(url_for('index'))
     return render_template("login.html")
 
 
