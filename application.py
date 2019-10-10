@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template,redirect,url_for,request
+from flask import Flask, session, render_template,redirect,url_for,request,flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -40,21 +40,20 @@ def book_page(isbn_num):
 
 @app.route("/login", methods=["POST","GET"])
 def login():
-    
-    if request.method == "GET":
-        session.pop('connected_user',None)
-        user_to_validate = request.form.get('username')
-        pass_to_validate = request.form.get('password')
+
+    if request.method == "POST":
+        # session.pop('connected_user',None)
+        user_to_validate = request.form.get("username")
+        pass_to_validate = request.form.get("password")
 
         db_user = db.execute(f"SELECT * FROM users WHERE username = '{user_to_validate}'").fetchone()
-        if db_user is None:
-            # return render_template("error.html", message = "Sorry, you are not registered", message_code = 400)
-            return render_template("login.html")
-            
-        if db_user.password != pass_to_validate:
+        if db.execute(f"SELECT * FROM users WHERE username = '{user_to_validate}'").rowcount == 0:
+            return render_template("error.html", message = "Sorry, you are not registered", message_code = 400)
+            # return render_template("login.html")
+        if (db_user.password != pass_to_validate):
             return render_template("error.html", message = "Sorry, wrong password", message_code = 400)
         session['connected_user'] = user_to_validate
-        return redirect(url_for('index'))
+        return redirect(url_for('main'))
     return render_template("login.html")
 
 
