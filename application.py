@@ -24,7 +24,7 @@ db = scoped_session(sessionmaker(bind=engine))
 def main():
     if 'connected_user' in session:
         return render_template("index.html")
-    return redirect(url_for('login'))
+    return redirect(url_for('register'))
 
 
 @app.route("/book/<string:isbn_num>", methods=['POST','GET'] )
@@ -59,19 +59,23 @@ def login():
 @app.route("/register", methods=["POST","GET"])
 def register():
     # TODO : check if user exists. if not, create and redirect to index
-    user_to_register = request.form.get("username")
-    pass_to_register = request.form.get("password1")
-    pass_to_validate = request.form.get("password2")
+    if request.method == "POST":
+        user_to_register = request.form.get("username")
+        pass_to_register = request.form.get("password1")
+        pass_to_validate = request.form.get("password2")
 
-    if pass_to_register == pass_to_validate:
-        if db.execute(f"SELECT * FROM users WHERE username = '{user_to_register}'").rowcount == 0:
-            # TODO : register
-            db.execute(f"INSERT INTO users VALUES ('{user_to_register}', '{pass_to_register}')")
-            return redirect(url_for('main'))
-        flash("Sorry, user already exists")
+        if pass_to_register == pass_to_validate:
+            if db.execute(f"SELECT * FROM users WHERE username = '{user_to_register}'").rowcount == 0:
+                # TODO : register
+                db.execute("INSERT INTO users (username, password) VALUES (:username, :password)", 
+                {"username" : user_to_register, "password" : pass_to_register})
+                db.commit()
+                return redirect(url_for('main'))
+            flash("Sorry, user already exists")
+            return redirect(url_for('register'))
+        flash("Sorry, passwords don't match")
         return redirect(url_for('register'))
-    flash("Sorry, passwords don't match")
-    return redirect(url_for('register'))
+    return render_template('register.html')
 
 # @app.route("/api/<string:isbn>", methods=["GET"])
 # def api_route():
