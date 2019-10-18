@@ -2,10 +2,20 @@
 {% block title %} BookPage {% endblock %}
 {% block body %}
 <h1>Book:</h1>
-
+<h2>General info:</h2>
 <ul>
     <li>Book name: {{ book.title }}</li>
+    <li>Author: {{ book.title }}</li>
+    <li>Year published: {{ book.year }}</li>
     <li>ISBN: {{ book.isbn }}</li>
 </ul>
 
+<h2>Reviews: </h2>
+{% for review in reviews %}
+<h3>Reviewed by : {{review.writer}}</h3>
+<p class = "review">
+    {{review.body}}
+</p>
+<p>Score : {{review.rating}}</p>
+{% endfor %}
 {% endblock %}

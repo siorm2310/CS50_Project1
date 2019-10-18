@@ -23,42 +23,51 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/", methods=['POST','GET'] )
 def main():
     if 'connected_user' in session:
+        if request.method == "POST":
+            if request.form.get("logoutButton") == "logout":
+                session.pop('connected_user',None)
+                return redirect(url_for('login'))
         return render_template("index.html")
-    return redirect(url_for('register'))
+    return redirect(url_for('login'))
 
 
-@app.route("/book/<string:isbn_num>", methods=['POST','GET'] )
+
+@app.route("/book/<string:isbn_num>", methods=['GET'] )
 def book_page(isbn_num):
-    book = db.execute(f"SELECT * FROM books WHERE isbn = '{isbn_num}'").fetchone()
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchone()
+    reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchall()
     if book is None:
         return render_template("error.html", message = "Sorry, ISBN didn't match any book", message_code = 404)
 
     # TODO: get all book reviews
-    return render_template("book_page.html", book = book)
+    return render_template("book_page.html", book = book, reviews = reviews)
 
 
 @app.route("/login", methods=["POST","GET"])
 def login():
-    session.pop('connected_user',None)
     if request.method == "POST":
         
         user_to_validate = request.form.get("username")
         pass_to_validate = request.form.get("password")
 
-        db_user = db.execute(f"SELECT * FROM users WHERE username = '{user_to_validate}'").fetchone()
-        if db.execute(f"SELECT * FROM users WHERE username = '{user_to_validate}'").rowcount == 0:
-            return render_template("error.html", message = "Sorry, you are not registered", message_code = 400)
-            # return render_template("login.html")
+        db_user = db.execute("SELECT * FROM users WHERE username = :username", 
+        {"username" : user_to_validate}).fetchone()
+
+        if db_user is None:
+            flash("Sorry, you are not rigstered!")
+            return render_template("login.html")
+
         if (db_user.password != pass_to_validate):
-            return render_template("error.html", message = "Sorry, wrong password", message_code = 400)
-        session['connected_user'] = user_to_validate
+            flash("Sorry, wrong password...")
+            return render_template("login.html")
+
+        session['connected_user'] = db_user
         return redirect(url_for('main'))
     return render_template("login.html")
 
 
 @app.route("/register", methods=["POST","GET"])
 def register():
-    # TODO : check if user exists. if not, create and redirect to index
     if request.method == "POST":
         user_to_register = request.form.get("username")
         pass_to_register = request.form.get("password1")
@@ -70,6 +79,7 @@ def register():
                 db.execute("INSERT INTO users (username, password) VALUES (:username, :password)", 
                 {"username" : user_to_register, "password" : pass_to_register})
                 db.commit()
+                flash("Successfully registered")
                 return redirect(url_for('main'))
             flash("Sorry, user already exists")
             return redirect(url_for('register'))
@@ -80,14 +90,6 @@ def register():
 # @app.route("/api/<string:isbn>", methods=["GET"])
 # def api_route():
 #     return "API book information page"
-
-@app.route("/error")
-def error(err_message): # ???
-    return render_template("error.html", message = err_message)
-
-@app.route("/success")
-def success():
-    return "custom success page"
 
 if __name__ == "__main__":
     app.run(debug = True)
