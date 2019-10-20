@@ -17,14 +17,19 @@
 <div>
   <h3>1. Search for a book</h3>
   <!-- Search form -->
-  <div class="md-form mt-0">
-    <input
-      class="form-control"
-      type="text"
-      placeholder="Enter ISBN number"
-      aria-label="Search"
-    />
-  </div>
+  <form method="post">
+    <div class="md-form mt-0">
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Enter ISBN number"
+        aria-label="Search"
+        name="isbnInput"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Submit</button>
+  </form>
+
 </div>
 <div>
   <h3>2. Write a review</h3>

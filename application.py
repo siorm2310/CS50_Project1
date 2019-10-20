@@ -24,9 +24,16 @@ db = scoped_session(sessionmaker(bind=engine))
 def main():
     if 'connected_user' in session:
         if request.method == "POST":
+            # Check for logout request
             if request.form.get("logoutButton") == "logout":
                 session.pop('connected_user',None)
                 return redirect(url_for('login'))
+
+            # Check for search request
+            isbnSearch = request.form.get("isbnInput")
+
+            if isbnSearch is not None:
+                return redirect(url_for('book_page', isbn_num = isbnSearch))
         return render_template("index.html")
     return redirect(url_for('login'))
 
