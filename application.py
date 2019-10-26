@@ -4,7 +4,7 @@ from flask import Flask, session, render_template,redirect,url_for,request,flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
+import requests
 app = Flask(__name__)
 
 # Check for environment variable
@@ -19,6 +19,8 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+
+KEY = "H0t660pPuc7Y3q9l8wwzw"
 
 @app.route("/", methods=['POST','GET'] )
 def main():
@@ -41,12 +43,14 @@ def main():
 
 @app.route("/book/<string:isbn_num>", methods=['GET'] )
 def book_page(isbn_num):
+    # Get data from DB
     book = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchone()
     reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchall()
     if book is None:
         return render_template("error.html", message = "Sorry, ISBN didn't match any book", message_code = 404)
 
-    # TODO: get all book reviews
+    # Fetch data from Goodreads
+    # gr_data = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "KEY", "isbns": isbn_num})
     return render_template("book_page.html", book = book, reviews = reviews)
 
 
@@ -82,12 +86,14 @@ def register():
 
         if pass_to_register == pass_to_validate:
             if db.execute(f"SELECT * FROM users WHERE username = '{user_to_register}'").rowcount == 0:
-                # TODO : register
+
+                # Registration
                 db.execute("INSERT INTO users (username, password) VALUES (:username, :password)", 
                 {"username" : user_to_register, "password" : pass_to_register})
                 db.commit()
                 flash("Successfully registered")
                 return redirect(url_for('main'))
+
             flash("Sorry, user already exists")
             return redirect(url_for('register'))
         flash("Sorry, passwords don't match")
