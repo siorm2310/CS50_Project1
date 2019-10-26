@@ -32,17 +32,30 @@ def main():
                 return redirect(url_for('login'))
 
             # Check for search request
-            isbnSearch = request.form.get("isbnInput")
+            searchType = request.form.get("searchRadio")
+            searchInput = request.form.get("searchInput")
 
-            if isbnSearch is not None:
-                return redirect(url_for('book_page', isbn_num = isbnSearch))
+            if searchInput is not None:
+                # return redirect(url_for('book_page', userInput = searchInput, userChoice = searchType))
+                return redirect(url_for('search', userInput = searchInput, userChoice = searchType))
         return render_template("index.html")
     return redirect(url_for('login'))
 
+@app.route("/search/<string:userInput>")
+def searchResult(userInput,userChoice):
+    books = {
+        'isbn' : db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : userInput}).fetchall(),
+        'title' : db.execute("SELECT * FROM books WHERE title = :title",{"title" : userInput}).fetchall(),
+        'author' : db.execute("SELECT * FROM books WHERE author = :author",{"author" : userInput}).fetchall()
+    }[userChoice]
 
+    if books is not None:
+        # TODO : add user selection of book from returned list
+        return redirect(url_for('book_page')) # !!!
+    return  render_template("error.html", message = "Sorry, no matchin book found", message_code = 404)
 
 @app.route("/book/<string:isbn_num>", methods=['GET'] )
-def book_page(isbn_num):
+def book_page(userInput,userChoice):
     # Get data from DB
     book = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchone()
     reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchall()

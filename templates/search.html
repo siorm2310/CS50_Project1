@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %} BookPage {% endblock %}
+{% block body %}
+<h1>Here is what we found:</h1>
+<ul>
+    {% for book in books %}
+    <li>
+        Title: {{book.title}}, Author: {{book.author}}, ISBN: {{book.isbn}}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
