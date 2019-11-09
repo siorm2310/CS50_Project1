@@ -44,9 +44,9 @@ def main():
 @app.route("/search/<string:userInput>")
 def searchResult(userInput,userChoice):
     books = {
-        'isbn' : db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : userInput}).fetchall(),
-        'title' : db.execute("SELECT * FROM books WHERE title = :title",{"title" : userInput}).fetchall(),
-        'author' : db.execute("SELECT * FROM books WHERE author = :author",{"author" : userInput}).fetchall()
+        'isbn' : db.execute("SELECT * FROM books WHERE isbn LIKE %:isbn%",{"isbn" : userInput}).fetchall(),
+        'title' : db.execute("SELECT * FROM books WHERE title LIKE %:title%",{"title" : userInput}).fetchall(),
+        'author' : db.execute("SELECT * FROM books WHERE author LIKE %:author%",{"author" : userInput}).fetchall()
     }[userChoice]
 
     if books is not None:
