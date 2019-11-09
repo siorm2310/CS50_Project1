@@ -41,21 +41,20 @@ def main():
         return render_template("index.html")
     return redirect(url_for('login'))
 
-@app.route("/search/<string:userInput>")
-def searchResult(userInput,userChoice):
+@app.route("/search/<string:userChoice>/<string:userInput>/")
+def search(userInput,userChoice):
     books = {
-        'isbn' : db.execute("SELECT * FROM books WHERE isbn LIKE %:isbn%",{"isbn" : userInput}).fetchall(),
-        'title' : db.execute("SELECT * FROM books WHERE title LIKE %:title%",{"title" : userInput}).fetchall(),
-        'author' : db.execute("SELECT * FROM books WHERE author LIKE %:author%",{"author" : userInput}).fetchall()
+        'isbn' : db.execute("SELECT * FROM books WHERE isbn LIKE :isbn",{"isbn" :'%' + userInput + '%'}).fetchall(),
+        'title' : db.execute("SELECT * FROM books WHERE title LIKE :title",{"title" : '%' + userInput + '%'}).fetchall(),
+        'author' : db.execute("SELECT * FROM books WHERE author LIKE :author",{"author" : '%' + userInput + '%'}).fetchall()
     }[userChoice]
 
-    if books is not None:
-        # TODO : add user selection of book from returned list
-        return redirect(url_for('book_page')) # !!!
-    return  render_template("error.html", message = "Sorry, no matchin book found", message_code = 404)
+    if len(books) > 0: # check for at least one book
+        return render_template('search.html', books = books)
+    return  render_template("error.html", message = "Sorry, no matching book found", message_code = 404)
 
 @app.route("/book/<string:isbn_num>", methods=['GET'] )
-def book_page(userInput,userChoice):
+def book_page(isbn_num):
     # Get data from DB
     book = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchone()
     reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchall()

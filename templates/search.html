@@ -1,12 +1,19 @@
 {% extends "layout.html" %}
-{% block title %} BookPage {% endblock %}
+{% block title %} Search {% endblock %}
 {% block body %}
 <h1>Here is what we found:</h1>
+<a href="{{url_for('main')}}">Click here to return</a>
 <ul>
     {% for book in books %}
     <li>
-        Title: {{book.title}}, Author: {{book.author}}, ISBN: {{book.isbn}}
+        <h4><a href="{{url_for('book_page', isbn_num = book.isbn)}}">{{book.title}}</a></h4>
+        <ul>
+            <li>Author: {{book.author}}</li>
+            <li>ISBN: {{book.isbn}}</li>
+        </ul>
+        <!-- TODO : Wrap up in link -->
     </li>
     {% endfor %}
 </ul>
+
 {% endblock %}
