@@ -1,21 +1,91 @@
-{% extends "layout.html" %}
-{% block title %} BookPage {% endblock %}
-{% block body %}
+{% extends "layout.html" %} {% block title %} BookPage {% endblock %} {% block
+body %}
 <h1>Book:</h1>
 <h2>General info:</h2>
 <ul>
-    <li>Book name: {{ book.title }}</li>
-    <li>Author: {{ book.author }}</li>
-    <li>Year published: {{ book.year }}</li>
-    <li>ISBN: {{ book.isbn }}</li>
+  <li>Book name: {{ book.title }}</li>
+  <li>Author: {{ book.author }}</li>
+  <li>Year published: {{ book.year }}</li>
+  <li>ISBN: {{ book.isbn }}</li>
 </ul>
 
-<h2>Reviews: </h2>
+<h2>Have you read this book? Leave a review!</h2>
+<form action="" method="post">
+  <div class="custom-control custom-radio custom-control-inline">
+    <input
+      type="radio"
+      id="customRadioInline1"
+      name="customRadioInline1"
+      class="custom-control-input"
+    />
+    <label class="custom-control-label" for="customRadioInline1"
+      >1</label
+    >
+  </div>
+  <div class="custom-control custom-radio custom-control-inline">
+    <input
+      type="radio"
+      id="customRadioInline2"
+      name="customRadioInline1"
+      class="custom-control-input"
+    />
+    <label class="custom-control-label" for="customRadioInline2"
+      >2</label
+    >
+  </div>
+  <div class="custom-control custom-radio custom-control-inline">
+    <input
+      type="radio"
+      id="customRadioInline3"
+      name="customRadioInline1"
+      class="custom-control-input"
+    />
+    <label class="custom-control-label" for="customRadioInline3"
+      >3</label
+    >
+  </div>
+  <div class="custom-control custom-radio custom-control-inline">
+    <input
+      type="radio"
+      id="customRadioInline4"
+      name="customRadioInline1"
+      class="custom-control-input"
+    />
+    <label class="custom-control-label" for="customRadioInline4"
+      >4</label
+    >
+  </div>
+  <div class="custom-control custom-radio custom-control-inline">
+    <input
+      type="radio"
+      id="customRadioInline5"
+      name="customRadioInline1"
+      class="custom-control-input"
+    />
+    <label class="custom-control-label" for="customRadioInline5"
+      >5</label
+    >
+  </div>
+  <div class="form-group">
+    <label for="reviewTextArea">Write your review here:</label>
+    <textarea
+      class="form-control"
+      id="reviewTextArea"
+      name="reviewInput"
+      rows="3"
+    ></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary" name="submitReviewButton">Submit review</button>
+</form>
+<h2>Here is the reviews our users left:</h2>
 {% for review in reviews %}
-<h3>Reviewed by : {{review.writer}}</h3>
-<p class = "review">
-    {{review.body}}
+<h3>{{review.writer}} writes:</h3>
+<p class="review">
+  {{review.body}}
 </p>
 <p>Score : {{review.rating}}</p>
 {% endfor %}
+
+<h2>And here is what Goodreads users think about it:</h2>
+<!-- TODO : style on the x axis for better readability -->
 {% endblock %}

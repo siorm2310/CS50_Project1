@@ -62,7 +62,11 @@ def book_page(isbn_num):
         return render_template("error.html", message = "Sorry, ISBN didn't match any book", message_code = 404)
 
     # Fetch data from Goodreads
-    # gr_data = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "KEY", "isbns": isbn_num})
+    # try:
+        # gr_data = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "KEY", "isbns": isbn_num})
+    # except Http404:
+    # TODO : Complete fetching of Goodreads Data
+    # TODO : add "create review"
     return render_template("book_page.html", book = book, reviews = reviews)
 
 
