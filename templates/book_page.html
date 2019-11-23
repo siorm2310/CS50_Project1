@@ -78,6 +78,7 @@ body %}
   <button type="submit" class="btn btn-primary" name="submitReviewButton">Submit review</button>
 </form>
 <h2>Here is the reviews our users left:</h2>
+{% if reviews %}
 {% for review in reviews %}
 <h3>{{review.writer}} writes:</h3>
 <p class="review">
@@ -85,7 +86,16 @@ body %}
 </p>
 <p>Score : {{review.rating}}</p>
 {% endfor %}
+{% else %}
+No reviews from our users.. yet
+{% endif %}
 
 <h2>And here is what Goodreads users think about it:</h2>
-<!-- TODO : style on the x axis for better readability -->
+{% if goodreads %}
+Average Score : {{goodreads['average_rating']}}
+<br>
+Number of reviews submitted: {{goodreads['reviews_count']}}
+{% else %}
+No data from Goodreads
+{% endif %}
 {% endblock %}

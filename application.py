@@ -62,12 +62,14 @@ def book_page(isbn_num):
         return render_template("error.html", message = "Sorry, ISBN didn't match any book", message_code = 404)
 
     # Fetch data from Goodreads
-    # try:
-        # gr_data = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "KEY", "isbns": isbn_num})
-    # except Http404:
+    try:
+        gr_data = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": KEY, "isbns": isbn_num}) 
+        data = gr_data.json()['books']
+    except gr_data.status_code != 200:
+        data = None
     # TODO : Complete fetching of Goodreads Data
-    # TODO : add "create review"
-    return render_template("book_page.html", book = book, reviews = reviews)
+    # TODO : connect review form to Flask
+    return render_template("book_page.html", book = book, reviews = reviews, goodreads = data[0])
 
 
 @app.route("/login", methods=["POST","GET"])
