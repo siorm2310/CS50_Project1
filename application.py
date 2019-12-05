@@ -53,7 +53,7 @@ def search(userInput,userChoice):
         return render_template('search.html', books = books)
     return  render_template("error.html", message = "Sorry, no matching book found", message_code = 404)
 
-@app.route("/book/<string:isbn_num>", methods=['GET'] )
+@app.route("/book/<string:isbn_num>", methods=["GET","POST"] )
 def book_page(isbn_num):
     # Get data from DB
     book = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchone()
@@ -67,8 +67,17 @@ def book_page(isbn_num):
         data = gr_data.json()['books']
     except gr_data.status_code != 200:
         data = None
-    # TODO : Complete fetching of Goodreads Data
-    # TODO : connect review form to Flask
+
+    # Fetch reviews if entered
+    if request.method == "POST":
+        rating = int(request.form.get("rating"))
+        review_text = request.form.get("reviewInput")
+        current_user = session["connected_user"]
+
+        db.execute(("INSERT INTO reviews (isbn, writer, body, rating) VALUES (:isbn, :writer, :body, :rating)"),
+        {"isbn" : isbn_num, "writer" : current_user.username, "body" : review_text, "rating" : rating})
+        db.commit()
+
     return render_template("book_page.html", book = book, reviews = reviews, goodreads = data[0])
 
 
