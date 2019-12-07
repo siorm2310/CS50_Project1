@@ -1,10 +1,11 @@
 import os
 
-from flask import Flask, session, render_template,redirect,url_for,request,flash
+from flask import Flask, session, render_template,redirect,url_for,request,flash,jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 import requests
+from statistics import mean  # for average calculation
 app = Flask(__name__)
 
 # Check for environment variable
@@ -73,7 +74,7 @@ def book_page(isbn_num):
         rating = int(request.form.get("rating"))
         review_text = request.form.get("reviewInput")
         current_user = session["connected_user"]
-
+        # TODO : Check if user submitted a review already
         db.execute(("INSERT INTO reviews (isbn, writer, body, rating) VALUES (:isbn, :writer, :body, :rating)"),
         {"isbn" : isbn_num, "writer" : current_user.username, "body" : review_text, "rating" : rating})
         db.commit()
@@ -127,9 +128,24 @@ def register():
         return redirect(url_for('register'))
     return render_template('register.html')
 
-# @app.route("/api/<string:isbn>", methods=["GET"])
-# def api_route():
-#     return "API book information page"
+@app.route("/api/<string:isbn_num>", methods=["GET"])
+def api_route(isbn_num):
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchone()
+    reviews_rating_raw = db.execute("SELECT rating FROM reviews WHERE isbn = :isbn",{"isbn" : isbn_num}).fetchall()
+    if book is None:
+        return render_template("error.html", message = "Sorry, ISBN didn't match any book", message_code = 404)
+    num_of_reviews = len(reviews_rating_raw)
+    if num_of_reviews == 0:
+        average_review = None
+    else:
+        reviews = [review[0] for review in reviews_rating_raw]
+        average_review = mean(reviews)
+    return jsonify(title = book.title,
+                    author = book.author,
+                    year = book.year,
+                    isbn = book.isbn,
+                    review_count = num_of_reviews,
+                    average_score = average_review)
 
 if __name__ == "__main__":
     app.run(debug = True)

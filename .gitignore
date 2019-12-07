@@ -6,3 +6,4 @@ __pychache__/
 flask_session/
 src4/
 venv/
+*.pyc
