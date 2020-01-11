@@ -37,7 +37,6 @@ def main():
             searchInput = request.form.get("searchInput")
 
             if searchInput is not None:
-                # return redirect(url_for('book_page', userInput = searchInput, userChoice = searchType))
                 return redirect(url_for('search', userInput = searchInput, userChoice = searchType))
         return render_template("index.html")
     return redirect(url_for('login'))
@@ -75,9 +74,14 @@ def book_page(isbn_num):
         review_text = request.form.get("reviewInput")
         current_user = session["connected_user"]
         # TODO : Check if user submitted a review already
-        db.execute(("INSERT INTO reviews (isbn, writer, body, rating) VALUES (:isbn, :writer, :body, :rating)"),
-        {"isbn" : isbn_num, "writer" : current_user.username, "body" : review_text, "rating" : rating})
-        db.commit()
+        if db.execute("SELECT * FROM reviews WHERE writer = :writer AND isbn = :isbn",{"writer" : current_user['username'],
+        "isbn" : isbn_num}).fetchall() == []:
+            db.execute(("INSERT INTO reviews (isbn, writer, body, rating) VALUES (:isbn, :writer, :body, :rating)"),
+            {"isbn" : isbn_num, "writer" : current_user.username, "body" : review_text, "rating" : rating})
+            db.commit()
+            return redirect(url_for('book_page', isbn_num = isbn_num))
+        else:
+            flash("You already reviewed this book")
 
     return render_template("book_page.html", book = book, reviews = reviews, goodreads = data[0])
 
