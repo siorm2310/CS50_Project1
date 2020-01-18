@@ -1,5 +1,7 @@
-{% extends "layout.html" %} {% block title %} BookPage {% endblock %} {% block
-body %}
+{% extends "layout.html" %}
+{% block title %} BookPage {% endblock %}
+
+{% block body %}
 <h1>Book:</h1>
 <h2>General info:</h2>
 <ul>
@@ -104,5 +106,5 @@ Number of reviews submitted: {{goodreads['reviews_count']}}
 No data from Goodreads
 {% endif %}
 <br>
-<a href="{{url_for('main')}}">Click here to return</a>
+<a href="{{url_for('main')}}" class="btn btn-primary">Click here to return</a>
 {% endblock %}
